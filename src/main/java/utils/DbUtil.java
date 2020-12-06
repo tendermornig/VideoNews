@@ -1,7 +1,5 @@
 package utils;
 
-import com.mysql.cj.protocol.Resultset;
-
 import java.sql.*;
 
 /**
@@ -53,7 +51,7 @@ public enum DbUtil {
     }
 
     /**
-     * 用于关闭数据库连接与数据库操作柄
+     * 用于关闭数据库连接与数据库操作柄与数据库查询结果集
      * @param s 数据库操作柄
      * @param c 数据库连接
      * @param rs 数据库查询结果集
