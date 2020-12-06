@@ -21,4 +21,8 @@ public class ApiConfig {
      * 访问失败时的code
      */
     public static final int FAIL_CODE = 400;
+    /**
+     * token过期间隔 单位毫秒
+     */
+    public static final long OVERDUE_INTERVAL = 1000 * 60 * 60;
 }

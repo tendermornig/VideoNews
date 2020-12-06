@@ -24,7 +24,18 @@ public enum DbUtil {
      * 数据库密码
      */
     private static final String PASSWORD = "2802660864";
-
+    /**
+     * 数据库连接
+     */
+    private Connection c;
+    /**
+     * 数据库操作柄
+     */
+    private Statement s;
+    /**
+     * 数据库结果集
+     */
+    private ResultSet rs;
     /**
      * 当前枚举类无参构造方法，用来加载Driver类。
      */
@@ -38,9 +49,10 @@ public enum DbUtil {
 
     /**
      * 获取数据库连接方法
+     *
      * @return MySql数据库的连接
      */
-    public Connection getMySqlConn()  {
+    private Connection getMySqlConn() {
         Connection c = null;
         try {
             c = DriverManager.getConnection(URL, ACCOUNT, PASSWORD);
@@ -52,13 +64,10 @@ public enum DbUtil {
 
     /**
      * 用于关闭数据库连接与数据库操作柄与数据库查询结果集
-     * @param s 数据库操作柄
-     * @param c 数据库连接
-     * @param rs 数据库查询结果集
      */
-    public void close(Statement s, Connection c, ResultSet rs) {
+    public void close() {
         try {
-            if (s !=null && !s.isClosed()) {
+            if (s != null && !s.isClosed()) {
                 s.close();
             }
             if (c != null && !c.isClosed()) {
@@ -70,5 +79,40 @@ public enum DbUtil {
         } catch (SQLException troubles) {
             troubles.printStackTrace();
         }
+    }
+
+    /**
+     * 更新数据库方法
+     * @param sql sql语句
+     * @return 本次更新操作是否成功
+     */
+    public boolean updateDb(String sql) {
+        try {
+            c = getMySqlConn();
+            s = c.createStatement();
+            return s.executeUpdate(sql) != 0;
+        } catch (SQLException troubles) {
+            troubles.printStackTrace();
+        }finally {
+            close();
+        }
+        return false;
+    }
+
+    /**
+     * 查询数据库方法
+     * @param sql sql语句
+     * @return 本次查询的结果集
+     */
+    public ResultSet queryDb(String sql) {
+        try {
+            c = getMySqlConn();
+            s = c.createStatement();
+            rs = s.executeQuery(sql);
+            return rs;
+        } catch (SQLException troubles) {
+            troubles.printStackTrace();
+        }
+        return null;
     }
 }
