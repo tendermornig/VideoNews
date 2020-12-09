@@ -1,11 +1,9 @@
 package modles;
 
-import java.io.Serializable;
-
 /**
  * @author 光
  */
-public class NewsModel implements Serializable {
+public class NewsModel {
 
     private int newsId;
     private String newsTitle;
