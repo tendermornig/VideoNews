@@ -1001,19 +1001,19 @@ SELECT|sys.sys_config
       <NotNull>1</NotNull>
       <SequenceIdentity>null</SequenceIdentity>
     </column>
-    <column id="303" parent="285" name="username">
+    <column id="303" parent="285" name="user_account">
       <Position>2</Position>
       <Comment>用户名</Comment>
       <DataType>varchar(50)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="304" parent="285" name="password">
+    <column id="304" parent="285" name="user_password">
       <Position>3</Position>
       <Comment>密码</Comment>
       <DataType>varchar(64)|0s</DataType>
     </column>
     <index id="305" parent="285" name="username">
-      <ColNames>username</ColNames>
+      <ColNames>user_account</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
@@ -1023,7 +1023,7 @@ SELECT|sys.sys_config
       <Primary>1</Primary>
     </key>
     <key id="307" parent="285" name="username">
-      <ColNames>username</ColNames>
+      <ColNames>user_account</ColNames>
       <UnderlyingIndexName>username</UnderlyingIndexName>
     </key>
     <column id="308" parent="286" name="collect_id">

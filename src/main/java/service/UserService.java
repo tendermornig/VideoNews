@@ -26,25 +26,18 @@ public class UserService {
      */
     @ResponseBody
     @RequestMapping(value = "/register", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public JSONObject registerUser(@RequestBody JSONObject jsonParam) {
+    public BaseResponse<String> registerUser(@RequestBody JSONObject jsonParam) {
         UserModel user = (UserModel) JSONObject.toBean(jsonParam, UserModel.class);
-        JSONObject result = new JSONObject();
-        result.element("msg", ApiConfig.FAIL);
-        result.element("code", ApiConfig.FAIL_CODE);
-        if (user.getUserAccount() == null || "".equals(user.getUserAccount())) {
-            result.element("error", "缺少参数userAccount");
-            return result;
-        }
-        if (user.getUserPassword() == null || "".equals(user.getUserPassword())) {
-            result.element("error", "缺少参数userPassword");
-            return result;
-        }
-        String sql = "insert ignore into user(username, password) values('"
+        BaseResponse<String> result = verificationUserParam(user);
+        String sql = "insert ignore into user(user_account, user_password) values('"
                 + user.getUserAccount() + "', '"
                 + user.getUserPassword() + "')";
         if (DbUtil.Instance.updateDb(sql)) {
-            result.element("msg", ApiConfig.SUCCESS);
-            result.element("code", ApiConfig.SUCCESS_CODE);
+            result.setMsg(ApiConfig.SUCCESS);
+            result.setCode(ApiConfig.SUCCESS_CODE_200);
+        } else {
+            result.setMsg(ApiConfig.SUCCESS);
+            result.setCode(ApiConfig.FAIL_CODE_401);
         }
         return result;
     }
@@ -59,21 +52,11 @@ public class UserService {
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public BaseResponse<String> userLogin(@RequestBody JSONObject jsonParam) {
         UserModel user = (UserModel) JSONObject.toBean(jsonParam, UserModel.class);
-        BaseResponse<String> result = new BaseResponse<>();
-        result.setMsg(ApiConfig.FAIL);
-        result.setCode(ApiConfig.FAIL_CODE);
-        if (user.getUserAccount() == null || "".equals(user.getUserAccount())) {
-            result.setData("缺少参数userAccount");
-            return result;
-        }
-        if (user.getUserPassword() == null || "".equals(user.getUserPassword())) {
-            result.setData("缺少参数userPassword");
-            return result;
-        }
-        String sql = "select * from user where username = '"
+        BaseResponse<String> result = verificationUserParam(user);
+        String sql = "select * from user where user_account = '"
                 + user.getUserAccount()
-                + "' and password = "
-                + user.getUserPassword() + "";
+                + "' and user_password = '"
+                + user.getUserPassword() + "'";
         ResultSet rs = DbUtil.Instance.queryDb(sql);
         try {
             if (rs != null && rs.next()) {
@@ -83,13 +66,26 @@ public class UserService {
                                 + System.currentTimeMillis()
                                 + user.getUserPassword());
                 result.setMsg(ApiConfig.SUCCESS);
-                result.setCode(ApiConfig.SUCCESS_CODE);
+                result.setCode(ApiConfig.SUCCESS_CODE_200);
                 result.setData(token);
             }
         } catch (SQLException troubles) {
             troubles.printStackTrace();
-        }finally {
+        } finally {
             DbUtil.Instance.close();
+        }
+        return result;
+    }
+
+    private BaseResponse<String> verificationUserParam(UserModel user) {
+        BaseResponse<String> result = new BaseResponse<>();
+        if (user.getUserAccount() == null || "".equals(user.getUserAccount())) {
+            result.setData("缺少参数userAccount");
+            return result;
+        }
+        if (user.getUserPassword() == null || "".equals(user.getUserPassword())) {
+            result.setData("缺少参数userPassword");
+            return result;
         }
         return result;
     }

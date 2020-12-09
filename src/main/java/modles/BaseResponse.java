@@ -1,5 +1,7 @@
 package modles;
 
+import utils.ApiConfig;
+
 import java.io.Serializable;
 
 /**
@@ -7,8 +9,8 @@ import java.io.Serializable;
  */
 public class BaseResponse<T> implements Serializable {
 
-    private String msg;
-    private int code;
+    private String msg = ApiConfig.FAIL;
+    private int code = ApiConfig.FAIL_CODE_400;
     private T data;
 
     public String getMsg() {
