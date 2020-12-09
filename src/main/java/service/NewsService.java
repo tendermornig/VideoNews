@@ -76,6 +76,7 @@ public class NewsService {
                     VideoCategoryModel categoryModel = new VideoCategoryModel();
                     categoryModel.setCategoryId(rs.getInt(1));
                     categoryModel.setCategoryName(rs.getString(2));
+                    categoryList.add(categoryModel);
                 }
                 result.setMsg(ApiConfig.SUCCESS);
                 result.setCode(ApiConfig.SUCCESS_CODE_200);
