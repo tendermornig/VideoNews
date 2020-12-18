@@ -21,6 +21,13 @@ import java.util.List;
 @RequestMapping("/list")
 public class NewsService {
 
+    /**
+     * 获取资讯列表
+     * @param limit 每次返回的资讯个数
+     * @param page 第几页
+     * @param token 验证的token
+     * @return 访问结果
+     */
     @ResponseBody
     @RequestMapping(value = "/news", params = {"limit", "page"}, method = RequestMethod.GET)
     public BaseResponse<List<NewsModel>> getNewsList(int limit, long page, @RequestHeader("token")String token) {
@@ -59,11 +66,17 @@ public class NewsService {
         return result;
     }
 
+    /**
+     * 获取所有视频类别的接口
+     * @param token 验证的token
+     * @return 访问结果
+     */
     @ResponseBody
     @RequestMapping(value = "/category", method = RequestMethod.GET)
     public BaseResponse<List<VideoCategoryModel>> getCategory(@RequestHeader("token")String token) {
         BaseResponse<List<VideoCategoryModel>> result = new BaseResponse<>();
         if (TokenUtil.verificationToken(token)) {
+            result.setMsg(ApiConfig.SUCCESS);
             result.setCode(ApiConfig.FAIL_CODE_402);
             return result;
         }
@@ -92,11 +105,18 @@ public class NewsService {
         return result;
     }
 
+    /**
+     * 获取视频的接口
+     * @param token 验证的token
+     * @param category 本次访问的视频类别
+     * @return 访问结果
+     */
     @ResponseBody
     @RequestMapping(value = "/video",params = "category", method = RequestMethod.GET)
-    public BaseResponse<List<VideoModel>> getVideoList(int category, @RequestHeader("token")String token) {
+    public BaseResponse<List<VideoModel>> getVideoList(@RequestHeader("token")String token, int category) {
         BaseResponse<List<VideoModel>> result = new BaseResponse<>();
         if (TokenUtil.verificationToken(token)) {
+            result.setMsg(ApiConfig.SUCCESS);
             result.setCode(ApiConfig.FAIL_CODE_402);
             return result;
         }

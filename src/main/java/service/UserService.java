@@ -53,6 +53,7 @@ public class UserService {
     public BaseResponse<String> userLogin(@RequestBody JSONObject jsonParam) {
         UserModel user = (UserModel) JSONObject.toBean(jsonParam, UserModel.class);
         BaseResponse<String> result = verificationUserParam(user);
+        result.setMsg(ApiConfig.SUCCESS);
         String sql = "select * from user where user_account = '"
                 + user.getUserAccount()
                 + "' and user_password = '"
@@ -65,7 +66,6 @@ public class UserService {
                         user.getUserAccount()
                                 + System.currentTimeMillis()
                                 + user.getUserPassword());
-                result.setMsg(ApiConfig.SUCCESS);
                 result.setCode(ApiConfig.SUCCESS_CODE_200);
                 result.setData(token);
             }
@@ -74,6 +74,21 @@ public class UserService {
         } finally {
             DbUtil.Instance.close();
         }
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/isToken", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public BaseResponse<Boolean> verificationTokenCache(@RequestHeader("token") String token) {
+        BaseResponse<Boolean> result = new BaseResponse<>();
+        if (TokenUtil.verificationToken(token)) {
+            result.setCode(ApiConfig.FAIL_CODE_402);
+            result.setData(false);
+            return result;
+        }
+        result.setMsg(ApiConfig.SUCCESS);
+        result.setCode(ApiConfig.SUCCESS_CODE_200);
+        result.setData(true);
         return result;
     }
 
