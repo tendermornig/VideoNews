@@ -1,9 +1,6 @@
 package service;
 
-import modles.BaseResponse;
-import modles.NewsModel;
-import modles.VideoCategoryModel;
-import modles.VideoModel;
+import modles.*;
 import org.springframework.web.bind.annotation.*;
 import utils.ApiConfig;
 import utils.DbUtil;
@@ -23,20 +20,21 @@ public class NewsService {
 
     /**
      * 获取资讯列表
+     *
      * @param limit 每次返回的资讯个数
-     * @param page 第几页
+     * @param page  第几页
      * @param token 验证的token
      * @return 访问结果
      */
     @ResponseBody
     @RequestMapping(value = "/news", params = {"limit", "page"}, method = RequestMethod.GET)
-    public BaseResponse<List<NewsModel>> getNewsList(int limit, long page, @RequestHeader("token")String token) {
+    public BaseResponse<List<NewsModel>> getNewsList(int limit, long page, @RequestHeader("token") String token) {
         BaseResponse<List<NewsModel>> result = new BaseResponse<>();
         if (TokenUtil.verificationToken(token)) {
             result.setCode(ApiConfig.FAIL_CODE_402);
             return result;
         }
-        String sql = "select * from news limit " + (page == 0? page : limit * page - 1) + ", " + limit + "";
+        String sql = "select * from news limit " + (page == 0 ? page : limit * page - 1) + ", " + limit + "";
         ResultSet rs = DbUtil.Instance.queryDb(sql);
         try {
             if (rs != null) {
@@ -55,7 +53,45 @@ public class NewsService {
                 result.setMsg(ApiConfig.SUCCESS);
                 result.setCode(ApiConfig.SUCCESS_CODE_200);
                 result.setData(videoNewsModels);
-            }else {
+            } else {
+                result.setCode(ApiConfig.FAIL_CODE_403);
+            }
+        } catch (SQLException troubles) {
+            troubles.printStackTrace();
+        } finally {
+            DbUtil.Instance.close();
+        }
+        return result;
+    }
+
+    /**
+     * 获取资讯略缩图接口
+     * @param newsId 资讯id
+     * @param token 验证的token
+     * @return 资讯略缩图集合
+     */
+    @ResponseBody
+    @RequestMapping(value = "/newsThumb", params = {"newsId"}, method = RequestMethod.GET)
+    public BaseResponse<List<NewsThumbModel>> getNewsThumb(int newsId, @RequestHeader("token") String token) {
+        BaseResponse<List<NewsThumbModel>> result = new BaseResponse<>();
+        if (TokenUtil.verificationToken(token)) {
+            result.setCode(ApiConfig.FAIL_CODE_402);
+            return result;
+        }
+        String sql = "select * from news_thumb where news_id = " + newsId + "";
+        ResultSet rs = DbUtil.Instance.queryDb(sql);
+        try {
+            if (rs != null) {
+                List<NewsThumbModel> newsThumbModels = new ArrayList<>();
+                while (rs.next()) {
+                    NewsThumbModel newsThumbModel = new NewsThumbModel();
+                    newsThumbModel.setThumbId(rs.getInt(1));
+                    newsThumbModel.setThumbUrl(rs.getString(2));
+                    newsThumbModel.setNewsId(rs.getInt(3));
+                    newsThumbModels.add(newsThumbModel);
+                }
+                result.setData(newsThumbModels);
+            } else {
                 result.setCode(ApiConfig.FAIL_CODE_403);
             }
         } catch (SQLException troubles) {
@@ -68,12 +104,13 @@ public class NewsService {
 
     /**
      * 获取所有视频类别的接口
+     *
      * @param token 验证的token
      * @return 访问结果
      */
     @ResponseBody
     @RequestMapping(value = "/category", method = RequestMethod.GET)
-    public BaseResponse<List<VideoCategoryModel>> getCategory(@RequestHeader("token")String token) {
+    public BaseResponse<List<VideoCategoryModel>> getCategory(@RequestHeader("token") String token) {
         BaseResponse<List<VideoCategoryModel>> result = new BaseResponse<>();
         if (TokenUtil.verificationToken(token)) {
             result.setMsg(ApiConfig.SUCCESS);
@@ -94,7 +131,7 @@ public class NewsService {
                 result.setMsg(ApiConfig.SUCCESS);
                 result.setCode(ApiConfig.SUCCESS_CODE_200);
                 result.setData(categoryList);
-            }else {
+            } else {
                 result.setCode(ApiConfig.FAIL_CODE_403);
             }
         } catch (SQLException troubles) {
@@ -107,13 +144,14 @@ public class NewsService {
 
     /**
      * 获取视频的接口
-     * @param token 验证的token
+     *
+     * @param token    验证的token
      * @param category 本次访问的视频类别
      * @return 访问结果
      */
     @ResponseBody
-    @RequestMapping(value = "/video",params = "category", method = RequestMethod.GET)
-    public BaseResponse<List<VideoModel>> getVideoList(@RequestHeader("token")String token, int category) {
+    @RequestMapping(value = "/video", params = "category", method = RequestMethod.GET)
+    public BaseResponse<List<VideoModel>> getVideoList(@RequestHeader("token") String token, int category) {
         BaseResponse<List<VideoModel>> result = new BaseResponse<>();
         if (TokenUtil.verificationToken(token)) {
             result.setMsg(ApiConfig.SUCCESS);
@@ -140,7 +178,7 @@ public class NewsService {
                 result.setMsg(ApiConfig.SUCCESS);
                 result.setCode(ApiConfig.SUCCESS_CODE_200);
                 result.setData(categoryList);
-            }else {
+            } else {
                 result.setCode(ApiConfig.FAIL_CODE_403);
             }
         } catch (SQLException troubles) {
