@@ -71,7 +71,7 @@ public class NewsService {
      * @return 资讯略缩图集合
      */
     @ResponseBody
-    @RequestMapping(value = "/newsThumb", params = {"newsId"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/thumb", params = {"newsId"}, method = RequestMethod.GET)
     public BaseResponse<List<NewsThumbModel>> getNewsThumb(int newsId, @RequestHeader("token") String token) {
         BaseResponse<List<NewsThumbModel>> result = new BaseResponse<>();
         if (TokenUtil.verificationToken(token)) {
