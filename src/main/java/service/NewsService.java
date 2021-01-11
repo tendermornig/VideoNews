@@ -27,8 +27,8 @@ public class NewsService {
      * @return 访问结果
      */
     @ResponseBody
-    @RequestMapping(value = "/list", params = {"limit", "page"}, method = RequestMethod.GET)
-    public BaseResponse<List<NewsModel>> getNewsList(int limit, long page, @RequestHeader("token") String token) {
+    @RequestMapping(value = "/list", params = {"page", "limit"}, method = RequestMethod.GET)
+    public BaseResponse<List<NewsModel>> getNewsList(long page, int limit, @RequestHeader("token") String token) {
         BaseResponse<List<NewsModel>> result = new BaseResponse<>();
         if (TokenUtil.verificationToken(token)) {
             result.setCode(ApiConfig.FAIL_CODE_402);
@@ -90,6 +90,8 @@ public class NewsService {
                     newsThumbModel.setNewsId(rs.getInt(3));
                     newsThumbModels.add(newsThumbModel);
                 }
+                result.setMsg(ApiConfig.SUCCESS);
+                result.setCode(ApiConfig.SUCCESS_CODE_200);
                 result.setData(newsThumbModels);
             } else {
                 result.setCode(ApiConfig.FAIL_CODE_403);

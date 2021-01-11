@@ -29,7 +29,7 @@ public class VideoService {
      */
     @ResponseBody
     @RequestMapping(value = "/list", params = "category", method = RequestMethod.GET)
-    public BaseResponse<List<VideoModel>> getVideoList(@RequestHeader("token") String token, int category) {
+    public BaseResponse<List<VideoModel>> getVideoList(int category, @RequestHeader("token") String token) {
         BaseResponse<List<VideoModel>> result = new BaseResponse<>();
         if (TokenUtil.verificationToken(token)) {
             result.setMsg(ApiConfig.SUCCESS);
